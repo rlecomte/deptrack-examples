@@ -54,7 +54,7 @@ executable deptrack-example
   main-is:             Main.hs
 
   -- Modules included in this executable, other than Main.
-  other-modules:       Base, Debian
+  other-modules:       Base, Debian, Java, PetClinic
 
   -- LANGUAGE extensions used by modules in this package.
   -- other-extensions:
@@ -74,4 +74,5 @@ executable deptrack-example
 
   -- Base language which the package is written in.
   default-language:    Haskell2010
-
+  
+  ghc-options:     -Wall

@@ -7,15 +7,12 @@
 module Debian where
 
 import Base
-import Control.Concurrent (forkIO)
 import Data.Proxy (Proxy (..))
 import Data.Set (Set)
 import Devops.Base
-import Devops.Cli
 import GHC.TypeLits   (KnownSymbol, Symbol, symbolVal)
 import Prelude
 import Turtle
-import qualified Data.Set as Set
 import qualified Data.Text as Text
 
 newtype DebianPackage (c :: Symbol) = DebianPackage Binary
@@ -29,10 +26,10 @@ instance Monoid DebianPackagesSet where
     mempty = DebianPackagesSet mempty
 
 debianPackage :: KnownSymbol a => Text -> DevOp env (DebianPackage a)
-debianPackage bin = f Proxy
+debianPackage bin = go Proxy
   where
-    f :: (KnownSymbol a) => Proxy a -> DevOp env (DebianPackage a)
-    f proxy =
+    go :: (KnownSymbol a) => Proxy a -> DevOp env (DebianPackage a)
+    go proxy =
         let install  = procs "apt-get" ["install", "-y", "-q", pkg] empty
             pkg = Text.pack (symbolVal proxy)
             preOp    = buildPreOp ("install package " <> pkg)
