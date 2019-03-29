@@ -8,7 +8,6 @@ module Debian where
 
 import Base
 import Data.Proxy (Proxy (..))
-import Data.Set (Set)
 import Devops.Base
 import GHC.TypeLits   (KnownSymbol, Symbol, symbolVal)
 import Prelude
@@ -16,14 +15,6 @@ import Turtle
 import qualified Data.Text as Text
 
 newtype DebianPackage (c :: Symbol) = DebianPackage Binary
-
-newtype DebianPackagesSet = DebianPackagesSet (Set Name)
-
-instance Semigroup DebianPackagesSet where
-    (DebianPackagesSet a) <> (DebianPackagesSet b) = DebianPackagesSet (a <> b)
-
-instance Monoid DebianPackagesSet where
-    mempty = DebianPackagesSet mempty
 
 debianPackage :: KnownSymbol a => Text -> DevOp env (DebianPackage a)
 debianPackage bin = go Proxy
