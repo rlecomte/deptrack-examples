@@ -7,10 +7,8 @@ import Debian
 import Devops.Base
 import Turtle
 
-newtype Maven3 = Maven3 Binary
-
-maven3 :: DevOp env Maven3
-maven3 = declare preOp $ wget >> tar >> return (Maven3 binary)
+maven3 :: DevOp env Binary
+maven3 = declare preOp $ wget >> tar >> return binary
     where
         name = "apache-maven-3.6.0"
 

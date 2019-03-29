@@ -65,21 +65,21 @@ runPetClinicDatabase = declare preOp $ return (PetClinicDatabase "localhost" 330
 
 runPetClinic :: DevOp env PetClinicRepo -> DevOp env PetClinicDatabase -> DevOp env PetClinicApp
 runPetClinic mkRepo mkDb = devop snd (preOp . fst) $ do
-    _                     <- openjdk8
-    (Maven3 (Binary mvn)) <- maven3
-    rep                   <- mkRepo
-    _                     <- mkDb
-    return ((mvn, rep), (PetClinicApp "localhost" 8080))
+    DebianPackage java <- openjdk8
+    mvn                <- maven3
+    PetClinicRepo rep  <- mkRepo
+    _                  <- mkDb
+    return ((java, mvn, rep), (PetClinicApp "localhost" 8080))
     where
-        preOp (mvn, rep) =
+        preOp dep =
             buildOp "start pet clinic"
                     "start pet clinic in local on port 8080."
                     noCheck
-                    (start mvn rep)
+                    (start dep)
                     noAction
                     noAction
 
-        start mvn (PetClinicRepo rep) = do
+        start ((Binary java), (Binary mvn), rep) = do
             cd (fromText rep)
             procs mvn ["package"] empty
-            shells "java -jar target/*.jar" empty
+            shells (java <> " -jar target/*.jar") empty
